@@ -1,31 +1,28 @@
-import { Wallet } from "@/near/wallet";
-import { useEffect, useMemo } from "react";
-
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_NAME;
+import nearStore from "@/store/nearStore";
 
 const Home = () => {
-  const wallet = useMemo(
-    () => new Wallet({ createAccessKeyFor: CONTRACT_ADDRESS }),
-    []
-  );
-
-  useEffect(() => {
-    (async () => {
-      await wallet.startUp();
-    })();
-  }, [wallet]);
+  const { wallet } = nearStore();
 
   return (
-    <div className="flex justify-between p-4 w-full">
-      <p>Relay Toon</p>
-      <button
-        className="text-white"
-        onClick={() => {
-          wallet.signIn();
-        }}
-      >
-        sign in
-      </button>
+    <div className="flex flex-col">
+      HOME
+      {wallet?.accountId ? (
+        <button
+          onClick={() => {
+            wallet.signOut();
+          }}
+        >
+          sign out
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            wallet.signIn();
+          }}
+        >
+          sign in
+        </button>
+      )}
     </div>
   );
 };
