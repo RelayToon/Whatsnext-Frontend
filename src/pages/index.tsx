@@ -1,7 +1,12 @@
+import { useState } from "react";
+import Image from "next/image";
+import Slider from "react-slick";
+
 import nearStore from "@/store/nearStore";
 import { cls } from "@/utils/tailwindCss";
-import Image from "next/image";
-import { useState } from "react";
+
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const featureList = [
   "ALL",
@@ -14,6 +19,24 @@ const featureList = [
   "Game",
   "Comic",
 ];
+
+const feaetureThumbnailList = [
+  "/images/main.png",
+  "/images/main.png",
+  "/images/main.png",
+];
+
+const settings = {
+  infinite: true,
+  speed: 500,
+  autoplay: true,
+  slidesToShow: 1,
+  pauseOnHover: true,
+  arrows: false,
+  centerMode: true,
+  centerPadding: "20px",
+  focusOnSelect: true,
+};
 
 const Home = () => {
   const { wallet } = nearStore();
@@ -55,6 +78,24 @@ const Home = () => {
             </button>
           );
         })}
+      </div>
+
+      <div className="py-6">
+        <Slider {...settings}>
+          {feaetureThumbnailList.map((thumbnailSrc) => {
+            return (
+              <div key={thumbnailSrc} className="px-2">
+                <Image
+                  src={thumbnailSrc}
+                  className="rounded-xl"
+                  width={1080}
+                  height={1080}
+                  alt={"thumbnailSrc"}
+                />
+              </div>
+            );
+          })}
+        </Slider>
       </div>
     </div>
   );

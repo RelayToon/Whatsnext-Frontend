@@ -39,12 +39,17 @@
     "process": "^0.11.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-slick": "^0.29.0",
     "react-test-renderer": "^18.2.0",
+    "slick-carousel": "^1.8.1",
     "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss": "3.3.2",
     "ts-node": "^10.9.1",
     "typescript": "5.0.4",
     "util": "^0.12.5",
     "zustand": "^4.3.8"
+  },
+  "devDependencies": {
+    "@types/react-slick": "^0.23.10"
   }
 }
