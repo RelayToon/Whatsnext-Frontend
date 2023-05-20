@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
+import Image from "next/image";
+import Link from "next/link";
 
 import { dummyComic } from "@/data";
-import Image from "next/image";
 
 const Comic = () => {
   const router = useRouter();
@@ -57,9 +58,12 @@ const Comic = () => {
               <p className="text-sm">320</p>
             </button>
           </div>
-          <button className="rounded border border-lightGray text-sm px-5 py-2">
+          <Link
+            href={`/comics/${comic?.id}/vote`}
+            className="rounded border border-lightGray text-sm px-5 py-2"
+          >
             go vote
-          </button>
+          </Link>
         </div>
       </div>
     </main>
