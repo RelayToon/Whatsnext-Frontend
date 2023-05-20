@@ -3,11 +3,38 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { dummyComic } from '@/data';
+import { getWalletAuthKey } from '@/utils/auth';
+import { useCallback, useEffect } from 'react';
+import nearStore from '@/store/nearStore';
 
 const Comic = () => {
+  const { isWalletStarted, wallet, setFtBalance, ftBalance } = nearStore();
   const router = useRouter();
   const comicId = router.query.id;
   const comic = dummyComic.find(({ id }) => id === comicId);
+
+  const viewFtToken = useCallback(async () => {
+    return wallet.viewMethod({
+      contractId: comicId,
+      method: 'ft_balance_of',
+      args: {
+        account_id: getWalletAuthKey(),
+      },
+    });
+  }, [wallet, comicId]);
+
+  useEffect(() => {
+    if (!isWalletStarted) return;
+
+    (async () => {
+      try {
+        const ftBalance = await viewFtToken();
+        setFtBalance(ftBalance);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [isWalletStarted, setFtBalance, viewFtToken]);
 
   return (
     <main className="flex justify-center items-center min-h-screen">

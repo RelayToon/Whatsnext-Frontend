@@ -1,6 +1,6 @@
 export const dummyComic = [
   {
-    id: "0",
+    id: "dev-1684588863899-93178118256035",
     title: "I’m only person in the world",
     author: "coke",
     image: "/images/main1.png",
@@ -8,7 +8,7 @@ export const dummyComic = [
     description: "blah blah blah blah blah blah blah blah blah",
   },
   {
-    id: "1",
+    id: "dev-1684588831975-64763231489253",
     title: "test2",
     author: "zero",
     image: "/images/main2.png",
@@ -17,5 +17,9 @@ export const dummyComic = [
   },
 ];
 
-// newVote 새로운 보트 만들기
-// getProposeAll = 제안 관련
+export const communityContractIds = [
+  "dev-1684588863899-93178118256035",
+  "dev-1684588831975-64763231489253",
+  "dev-1684588808750-72116248629796",
+  "dev-1684588757249-57610888532698",
+];

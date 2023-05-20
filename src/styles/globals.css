@@ -22,3 +22,9 @@
   font-weight: 700;
   font-style: bold;
 }
+
+textarea:focus,
+button:focus,
+input:focus {
+  outline: none;
+}
