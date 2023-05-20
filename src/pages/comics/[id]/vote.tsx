@@ -7,7 +7,10 @@ import VoteCreateModal from "@/components/modal/VoteCreateModal";
 import { dummyComic, dummyProposal } from "@/data";
 import { cls } from "@/utils/tailwindCss";
 
+const VOTE_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_VOTE_CONTRACT_NAME;
+
 const ComicVote = () => {
+  const { wallet, isWalletStarted } = nearStore();
   const [isOpenVoteCreateModal, setIsOpenVoteCreateModal] =
     useState<boolean>(false);
   const { ftBalance } = nearStore();
@@ -18,10 +21,37 @@ const ComicVote = () => {
   const [selectedProposal, setSelectedProposal] = useState<number | null>(null);
 
   useEffect(() => {
+    (async () => {
+      if (!isWalletStarted) return;
+
+      try {
+        const isVoting = await wallet.viewMethod({
+          contractId: VOTE_CONTRACT_ADDRESS,
+          method: "is_voting",
+          args: {
+            community_id: comicId,
+          },
+        });
+
+        if (!isVoting) {
+          await wallet.callMethod({
+            contractId: VOTE_CONTRACT_ADDRESS,
+            method: "new_vote",
+            args: {
+              prefix: "1",
+              community_id: comicId,
+            },
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+
     return () => {
       setSelectedProposal(null);
     };
-  }, []);
+  }, [comicId, isWalletStarted, wallet]);
 
   return (
     <>
@@ -39,7 +69,7 @@ const ComicVote = () => {
             }}
           >
             <Image
-              src="/svgs/arrow-left.svg"
+              src="/svgs/arrow-back.svg"
               width={14}
               height={14}
               alt="arrow left"
@@ -71,7 +101,7 @@ const ComicVote = () => {
               </div>
             </div>
           </div>
-          <div className="min-h-[calc(100vh-224px)] max-h-[calc(100vh-224px)] overflow-scroll px-5">
+          <div className="min-h-[calc(100vh-236px)] max-h-[calc(100vh-236px)] overflow-scroll px-5">
             <div className="flex flex-col gap-2.5">
               {dummyProposal.map((proposal, index) => (
                 <div
@@ -158,6 +188,7 @@ const ComicVote = () => {
       </div>
 
       <VoteCreateModal
+        comicId={comicId as string}
         isOpen={isOpenVoteCreateModal}
         onClose={() => setIsOpenVoteCreateModal(false)}
       />

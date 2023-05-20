@@ -17,7 +17,7 @@ import {
 import { setupLedger } from "@near-wallet-selector/ledger";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 
-const THIRTY_TGAS = "30000000000000";
+const THIRTY_TGAS = "50000000000000";
 const NO_DEPOSIT = "0";
 
 type Network = "mainnet" | "testnet";
