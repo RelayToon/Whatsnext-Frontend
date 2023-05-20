@@ -6,10 +6,12 @@ import nearStore from "@/store/nearStore";
 
 interface VoteCreateModalProps extends ModalProps {
   voteProposalAddress: string;
+  afterCallback: () => void;
 }
 
 const VoteCreateModal = ({
   voteProposalAddress,
+  afterCallback,
   isOpen,
   onClose,
 }: VoteCreateModalProps) => {
@@ -33,17 +35,22 @@ const VoteCreateModal = ({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const res = await wallet.callMethod({
-      contractId: voteProposalAddress,
-      method: "add_proposal",
-      args: {
-        title: topic,
-        prompt: keyword,
-        description,
-      },
-    });
+    try {
+      await wallet.callMethod({
+        contractId: voteProposalAddress,
+        method: "add_proposal",
+        args: {
+          title: topic,
+          prompt: keyword,
+          description,
+        },
+      });
 
-    console.log(res);
+      afterCallback();
+      onClose();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (

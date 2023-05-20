@@ -6,38 +6,60 @@ import Image from "next/image";
 import nearStore from "@/store/nearStore";
 
 interface VoteModalProps extends ModalProps {
+  proposal: number;
   title: string;
   prompt: string;
   description: string;
+  voteProposalAddress: string;
 }
 
 const VoteModal = ({
+  proposal,
   title,
   prompt,
   description,
+  voteProposalAddress,
   isOpen,
   onClose,
 }: VoteModalProps) => {
-  const { wallet, ftBalance } = nearStore();
-  const [voteCount, setVoteCount] = useState<number>(0);
+  const { wallet, ftBalance, setFtBalance } = nearStore();
+  const [voteAmount, setVoteAmount] = useState<number>(0);
   const [selected, setSelected] = useState<boolean>(false);
 
   const incrementVote = () => {
-    if (ftBalance === voteCount) return;
-    setVoteCount(voteCount + 1);
+    if (ftBalance === voteAmount) return;
+    setVoteAmount(voteAmount + 1);
   };
 
   const decrementVote = () => {
-    if (!voteCount) return;
-    setVoteCount(voteCount - 1);
+    if (!voteAmount) return;
+    setVoteAmount(voteAmount - 1);
+  };
+
+  const handleVote = async () => {
+    try {
+      await wallet.callMethod({
+        contractId: voteProposalAddress,
+        method: "vote",
+        args: {
+          proposal: proposal + "",
+          amount: voteAmount,
+        },
+      });
+
+      setFtBalance(ftBalance - voteAmount);
+      onClose();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
-    return () => {
-      setVoteCount(0);
+    if (!isOpen) {
+      setVoteAmount(0);
       setSelected(false);
-    };
-  }, []);
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -88,7 +110,7 @@ const VoteModal = ({
                 className="h-10 w-14 flex justify-center items-center"
                 style={{ backgroundColor: "#323232" }}
               >
-                {voteCount}
+                {voteAmount}
               </div>
               <button
                 onClick={incrementVote}
@@ -104,6 +126,8 @@ const VoteModal = ({
           </div>
           <div className="flex text-white">
             <button
+              type="button"
+              onClick={onClose}
               className={cls(
                 "w-full py-4 font-bold rounded-bl-lg bg-lightGray"
               )}
@@ -111,8 +135,10 @@ const VoteModal = ({
               Cancel
             </button>
             <button
+              type="button"
+              onClick={handleVote}
               className={cls("w-full py-4 font-bold rounded-br-lg bg-pink")}
-              disabled={!voteCount}
+              disabled={!voteAmount}
             >
               Vote the next story
             </button>

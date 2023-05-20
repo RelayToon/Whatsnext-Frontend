@@ -21,6 +21,8 @@ const ComicVote = () => {
   const [isOpenVoteModal, setIsOpenVoteModal] = useState<boolean>(false);
   const [selectedProposal, setSelectedProposal] = useState<number | null>(null);
   const [proposals, setProposals] = useState([]);
+
+  const [proposalId, setProposalId] = useState<number>(0);
   const [topic, setTopic] = useState<string>("");
   const [keyword, setKeyword] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -56,6 +58,7 @@ const ComicVote = () => {
             contractId: VOTE_PROPOSAL_CONTRACT_ADDRESS,
             method: "get_all_proposals",
           });
+
           setProposals(allProposals);
         } else {
           await wallet.callMethod({
@@ -86,10 +89,12 @@ const ComicVote = () => {
   }, [isOpenVoteModal]);
 
   const handleOpenVoteModal = (
+    proposalId: number,
     title: string,
     prompt: string,
     description: string
   ) => {
+    setProposalId(proposalId);
     setTopic(title);
     setKeyword(prompt);
     setDescription(description);
@@ -196,7 +201,7 @@ const ComicVote = () => {
                           alt="into proposal"
                           className="mr-2"
                           onClick={() =>
-                            handleOpenVoteModal(title, prompt, description)
+                            handleOpenVoteModal(id, title, prompt, description)
                           }
                         />
                         {/* totalVote */}
@@ -215,7 +220,7 @@ const ComicVote = () => {
                       </div>
                     </div>
                     {/* writer */}
-                    <div>@{"coke"}</div>
+                    <div>@{"anonymous"}</div>
                   </div>
                 </div>
               ))}
@@ -237,10 +242,20 @@ const ComicVote = () => {
       <VoteCreateModal
         voteProposalAddress={voteProposalAddress}
         isOpen={isOpenVoteCreateModal}
+        afterCallback={async () => {
+          const allProposals = await wallet.viewMethod({
+            contractId: VOTE_PROPOSAL_CONTRACT_ADDRESS,
+            method: "get_all_proposals",
+          });
+
+          setProposals(allProposals);
+        }}
         onClose={() => setIsOpenVoteCreateModal(false)}
       />
 
       <VoteModal
+        voteProposalAddress={voteProposalAddress}
+        proposal={proposalId}
         title={topic}
         prompt={keyword}
         description={description}
