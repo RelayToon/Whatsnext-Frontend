@@ -7,8 +7,8 @@ import { dummyComic } from '@/data';
 const Comic = () => {
   const router = useRouter();
   const comicId = router.query.id;
-
   const comic = dummyComic.find(({ id }) => id === comicId);
+
   return (
     <main className="flex justify-center items-center min-h-screen">
       <div className="p-2.5">
@@ -37,8 +37,8 @@ const Comic = () => {
           <div className="w-3.5" />
         </div>
 
-        <div className="flex justify-between bg-darkGray p-4 pb-5">
-          <div className="flex gap-5">
+        <div className="flex itemx-start justify-between bg-darkGray p-4 pb-5 h-24">
+          <div className="flex gap-5 h-8">
             <button className="flex items-center gap-1.5">
               <Image src="/svgs/heart.svg" width={20} height={18} alt="heart" />
               <p className="text-sm">991</p>
