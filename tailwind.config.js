@@ -14,6 +14,8 @@ module.exports = {
         secondary: "#62D6C5",
         red: "#C26C7B",
         gray: "#D0D5DD",
+        darkGray: "#272727",
+        lightGray: "#666666",
       },
       fontFamily: {
         sans: ["sans"],

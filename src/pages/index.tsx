@@ -1,12 +1,13 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import Slider from "react-slick";
-
-import nearStore from "@/store/nearStore";
-import { cls } from "@/utils/tailwindCss";
-
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
+import { cls } from "@/utils/tailwindCss";
+import { dummyComic } from "@/data";
+import nearStore from "@/store/nearStore";
 
 const genreTabList = [
   "All",
@@ -21,12 +22,6 @@ const genreTabList = [
 ];
 
 const suggestTabList = ["Trending", "Top"];
-
-const feaetureThumbnailList = [
-  "/images/main.png",
-  "/images/main.png",
-  "/images/main.png",
-];
 
 const trendThumbnailList = [
   "/images/trend1.png",
@@ -50,6 +45,7 @@ const settings = {
 };
 
 const Home = () => {
+  const router = useRouter();
   const { wallet } = nearStore();
   const [currentGenreTab, setCurrentGenreTab] = useState<string>(
     genreTabList[0]
@@ -76,7 +72,14 @@ const Home = () => {
           alt="hamberger svg"
         />
         <h1 className="font-bold">what’s next</h1>
-        <Image src="/svgs/plus.svg" width={18} height={20} alt="plu svg" />
+        <button
+          type="button"
+          onClick={() => {
+            router.push("/comics/create");
+          }}
+        >
+          <Image src="/svgs/plus.svg" width={18} height={20} alt="plu svg" />
+        </button>
       </div>
       <div className="pr-5 h-full overflow-y-auto whitespace-nowrap scrollbar-hide">
         {genreTabList.map((feature) => {
@@ -102,17 +105,23 @@ const Home = () => {
 
       <div className="relative pt-6">
         <Slider {...settings}>
-          {feaetureThumbnailList.map((thumbnailSrc) => {
+          {dummyComic.map(({ id, image, title }) => {
             return (
-              <div key={thumbnailSrc} className="px-2">
+              <button
+                key={id}
+                onClick={() => {
+                  router.push(`/comics/${id}`);
+                }}
+                className="h-full px-2 overflow-hidden"
+              >
                 <Image
-                  src={thumbnailSrc}
-                  className="rounded-xl"
+                  src={image}
+                  className="rounded-xl object-cover w-full h-full"
                   width={1080}
                   height={1080}
-                  alt={"thumbnailSrc"}
+                  alt={title + "-thumbnail"}
                 />
-              </div>
+              </button>
             );
           })}
         </Slider>
