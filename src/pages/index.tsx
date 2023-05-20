@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const genreTabList = [
-  "ALL",
+  "All",
   "Top",
   "Fantasy",
   "Drama",
@@ -203,7 +203,7 @@ const Home = () => {
           );
         })}
       </div>
-      <div className="grid grid-cols-3 gap-x-2 gap-y-2 px-4">
+      <div className="grid grid-cols-3 gap-x-2.5 gap-y-2.5 px-4">
         {trendThumbnailList.map((thumbnail) => {
           return (
             <div key={thumbnail}>

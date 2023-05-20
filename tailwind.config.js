@@ -15,6 +15,10 @@ module.exports = {
         red: "#C26C7B",
         gray: "#D0D5DD",
       },
+      fontFamily: {
+        sans: ["sans"],
+        pretendard: ["Pretendard"],
+      },
     },
   },
   plugins: [require("tailwind-scrollbar-hide")],
