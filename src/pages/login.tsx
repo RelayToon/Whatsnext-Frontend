@@ -18,8 +18,12 @@ const Login = () => {
   return (
     <div className="flex flex-col justify-center items-center w-full min-h-screen p-5 gap-20">
       <div className="flex flex-col items-center gap-5">
-        {/* 로고 이미지로 대체 */}
-        <div className="w-32 h-32 rounded-2xl bg-white" />
+        <Image
+          src="/svgs/next-logo.svg"
+          width={105}
+          height={100}
+          alt="next-logo"
+        />
         <h1 className="text-center font-bold text-3xl">what’s next</h1>
       </div>
       <button

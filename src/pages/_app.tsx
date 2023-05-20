@@ -11,6 +11,9 @@ const App = ({ Component, pageProps }: AppProps) => {
   const { init, setIsWalletStarted, setFtBalance } = nearStore();
 
   const viewFtToken = async (wallet: any) => {
+    const authKey = getWalletAuthKey();
+    if (!authKey) return;
+
     return wallet.viewMethod({
       contractId: CONTRACT_ADDRESS,
       method: "ft_balance_of",

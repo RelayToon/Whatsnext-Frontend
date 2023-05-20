@@ -1,27 +1,49 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 
-import { dummyComic } from "@/data";
+import { dummyComic, dummyComicCuts } from "@/data";
 import { getWalletAuthKey } from "@/utils/auth";
-import { useCallback, useEffect } from "react";
 import nearStore from "@/store/nearStore";
+import { cls } from "@/utils/tailwindCss";
 
 const Comic = () => {
-  const { isWalletStarted, wallet, setFtBalance, ftBalance } = nearStore();
   const router = useRouter();
+  const navRef = useRef<HTMLDivElement>(null);
+  const { isWalletStarted, wallet, setFtBalance, ftBalance } = nearStore();
+
+  const [currentEpisode, setCurrentEpisode] = useState<number>(0);
+  const [isHideNav, setIsHideNav] = useState<boolean>(false);
+
   const comicId = router.query.id;
   const comic = dummyComic.find(({ id }) => id === comicId);
+  const comicCuts = dummyComicCuts.find(
+    ({ communityId }) => communityId === comic?.id
+  )?.cuts;
+
+  const currentCut = useMemo(() => {
+    return comicCuts?.find(({ id }) => id === currentEpisode);
+  }, [comicCuts, currentEpisode]);
 
   const viewFtToken = useCallback(async () => {
+    const authKey = getWalletAuthKey();
+    if (!authKey) return;
+
     return wallet.viewMethod({
       contractId: comicId,
       method: "ft_balance_of",
       args: {
-        account_id: getWalletAuthKey(),
+        account_id: authKey,
       },
     });
   }, [wallet, comicId]);
+
+  const handleNavHide = useCallback((e: any) => {
+    if (e.target === navRef.current) {
+      setIsHideNav((prev) => !prev);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isWalletStarted) return;
@@ -37,23 +59,35 @@ const Comic = () => {
   }, [isWalletStarted, setFtBalance, viewFtToken]);
 
   return (
-    <main className="flex justify-center items-center min-h-screen">
-      <div className="p-2.5">
-        <p className="text-right text-sm">@{comic?.author}</p>
-        <div className="w-full h-min mt-2.5 mb-5">
-          <Image
-            src={comic?.image || ""}
-            width={1080}
-            height={1080}
-            alt={comic?.title + "-image"}
-          />
+    <main onClick={handleNavHide}>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="p-2.5">
+          <p className="text-right text-sm">@{currentCut?.author}</p>
+          <div className="w-full h-min mt-2.5 mb-5">
+            <Image
+              src={currentCut?.image || ""}
+              width={1080}
+              height={1080}
+              alt={comic?.title + "-episode-" + currentCut?.id}
+            />
+          </div>
+          <p className="text-xs font-medium opacity-80">
+            {currentCut?.keyword}
+          </p>
+          <p className="font-medium">{currentCut?.description}</p>
         </div>
-        <p className="text-xs font-medium opacity-80">{comic?.keyword}</p>
-        <p className="font-medium">{comic?.description}</p>
       </div>
 
-      <div className="fixed flex flex-col justify-between top-0 w-full h-screen">
-        <div className="flex justify-between items-center px-6 h-16 bg-darkGray">
+      <div
+        ref={navRef}
+        className="fixed flex flex-col justify-between top-0 w-full h-screen"
+      >
+        <div
+          className={cls(
+            "flex justify-between items-center px-6 h-16 bg-darkGray",
+            isHideNav ? "hidden" : ""
+          )}
+        >
           <button
             type="button"
             onClick={() => {
@@ -74,18 +108,23 @@ const Comic = () => {
           <div className="w-3.5" />
         </div>
 
-        <div className="flex itemx-start justify-between bg-darkGray p-4 pb-5 h-24">
+        <div
+          className={cls(
+            "flex itemx-start justify-between bg-darkGray p-4 pb-5 h-24",
+            isHideNav ? "hidden" : ""
+          )}
+        >
           <div className="flex gap-5 h-8">
             <button className="flex items-center gap-1.5">
               <Image src="/svgs/heart.svg" width={20} height={18} alt="heart" />
-              <p className="text-sm">991</p>
+              <p className="text-sm">{currentCut?.like}</p>
             </button>
             <button
               className="flex items-center gap-1.5"
               onClick={() => router.push(`/comics/${comicId}/comment`)}
             >
               <Image src="/svgs/talk.svg" width={18} height={18} alt="talk" />
-              <p className="text-sm">320</p>
+              <p className="text-sm">{currentCut?.comment}</p>
             </button>
           </div>
           <Link

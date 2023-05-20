@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import { cls } from "@/utils/tailwindCss";
-import { dummyComic } from "@/data";
+import { communityList, dummyComic, trendThumbnailList } from "@/data";
 import nearStore from "@/store/nearStore";
 
 const genreTabList = [
@@ -22,15 +22,6 @@ const genreTabList = [
 ];
 
 const suggestTabList = ["Trending", "Top"];
-
-const trendThumbnailList = [
-  "/images/trend1.png",
-  "/images/trend2.png",
-  "/images/trend3.png",
-  "/images/trend4.png",
-  "/images/trend5.png",
-  "/images/trend6.png",
-];
 
 const settings = {
   infinite: true,
@@ -63,23 +54,24 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex justify-between p-6 pt-3">
+    <div className="flex flex-col pt-4 pb-24">
+      <div className="flex justify-between p-6">
         <Image
           src="/svgs/hamberger.svg"
           width={18}
           height={20}
           alt="hamberger svg"
         />
-        <h1 className="font-bold">what’s next</h1>
-        <button
-          type="button"
-          onClick={() => {
-            router.push("/comics/create");
-          }}
-        >
-          <Image src="/svgs/plus.svg" width={18} height={20} alt="plu svg" />
-        </button>
+        <div className="flex gap-1">
+          <Image
+            src="/svgs/next-logo.svg"
+            width={18}
+            height={20}
+            alt="next-logo"
+          />
+          <h1 className="font-bold">what’s next</h1>
+        </div>
+        <div className="w-4.5" />
       </div>
       <div className="pr-5 h-full overflow-y-auto whitespace-nowrap scrollbar-hide">
         {genreTabList.map((feature) => {
@@ -105,7 +97,7 @@ const Home = () => {
 
       <div className="relative pt-6">
         <Slider {...settings}>
-          {dummyComic.map(({ id, image, title }) => {
+          {dummyComic.map(({ id, thumbnail, title }) => {
             return (
               <button
                 key={id}
@@ -115,7 +107,7 @@ const Home = () => {
                 className="h-full px-2 overflow-hidden"
               >
                 <Image
-                  src={image}
+                  src={thumbnail}
                   className="rounded-xl object-cover w-full h-full"
                   width={1080}
                   height={1080}
@@ -157,37 +149,31 @@ const Home = () => {
             alt="left arrow"
           />
         </button>
-        <div className="flex flex-col gap-6">
-          <div className="flex gap-2">
-            <div>
+        <div className="flex flex-col gap-2.5">
+          {communityList.map(({ title, description, episode, thumbnail }) => (
+            <div
+              key={title}
+              className="flex gap-2.5 p-2.5 pr-5 bg-darkGray rounded-lg"
+            >
               <Image
-                src="/images/community.png"
+                src={thumbnail}
                 className="rounded-lg"
-                width={50}
-                height={50}
-                alt="community1"
+                width={60}
+                height={60}
+                alt={title + "-thumbnail"}
               />
+              <div className="w-full flex flex-col justify-center gap-1">
+                <div className="flex justify-between">
+                  <p className="font-bold text-lg pr-4 overflow-hidden truncate">
+                    {title}
+                  </p>
+                  <p className="text-sm">p.{episode}</p>
+                </div>
+
+                <p className="text-sm font-medium">{description}</p>
+              </div>
             </div>
-            <div className="flex flex-col gap-1">
-              <p className="font-bold">Name P.21</p>
-              <p className="text-sm">Content Content Content Content...</p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <div>
-              <Image
-                src="/images/community.png"
-                className="rounded-lg"
-                width={50}
-                height={50}
-                alt="community1"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <p className="font-bold">Name P.10</p>
-              <p className="text-sm">Content Content Content Content...</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 

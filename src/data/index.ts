@@ -1,27 +1,87 @@
 export const dummyComic = [
   {
-    id: "dev-1684588863899-93178118256035",
-    title: "I’m only person in the world",
+    id: "dev-1684567174380-54251358482328",
+    title: "The Moonlight Library",
     author: "coke",
-    image: "/images/main1.png",
-    keyword: "dark, city, man",
+    thumbnail: "/images/the-moonlight-library.png",
+    keyword: "moonlight, city, alone, man",
     description: "blah blah blah blah blah blah blah blah blah",
   },
   {
     id: "dev-1684588831975-64763231489253",
-    title: "test2",
+    title: "Space War",
     author: "zero",
-    image: "/images/main2.png",
-    keyword: "hero, queen, yellow",
+    thumbnail: "/images/space-war.png",
+    keyword: "space, war, girl",
+    description: "blah blah blah blah blah blah blah blah blah",
+  },
+  {
+    id: "dev-1684588863899-93178118256035",
+    title: "A Forest Child",
+    author: "zero",
+    thumbnail: "/images/a-forest-child.png",
+    keyword: "forest, child, romance",
     description: "blah blah blah blah blah blah blah blah blah",
   },
 ];
 
-export const communityContractIds = [
-  "dev-1684588863899-93178118256035",
-  "dev-1684588831975-64763231489253",
-  "dev-1684588808750-72116248629796",
-  "dev-1684588757249-57610888532698",
+export const trendThumbnailList = [
+  "/images/trend-1.png",
+  "/images/trend-2.png",
+  "/images/trend-3.png",
+  "/images/trend-4.png",
+  "/images/trend-5.png",
+  "/images/trend-6.png",
+];
+
+export const communityList = [
+  {
+    episode: 12,
+    title: "Sky Park",
+    description: "There was something strange in the...",
+    thumbnail: "/images/sky-park.png",
+  },
+  {
+    episode: 37,
+    title: "I’m only person in the...",
+    description: "I felt a sense of where nobody was",
+    thumbnail: "/images/only-person.png",
+  },
+];
+
+export const dummyComicCuts = [
+  {
+    communityId: "dev-1684567174380-54251358482328",
+    cuts: [
+      {
+        id: 0,
+        image: "/images/the-moonlight-library-1.png",
+        keyword: "a, b, c",
+        author: "asd",
+        description: "sdadasdas",
+        like: 472,
+        comment: 183,
+      },
+      {
+        id: 1,
+        image: "/images/the-moonlight-library-2.png",
+        keyword: "a, b, c",
+        author: "asd",
+        description: "sdadasdas",
+        like: 273,
+        comment: 62,
+      },
+      {
+        id: 2,
+        image: "/images/the-moonlight-library-3.png",
+        keyword: "a, b, c",
+        author: "asd",
+        description: "sdadasdas",
+        like: 123,
+        comment: 45,
+      },
+    ],
+  },
 ];
 
 export const dummyProposal = [

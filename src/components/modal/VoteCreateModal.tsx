@@ -2,15 +2,21 @@ import { useEffect, useMemo, useState } from "react";
 
 import Modal, { ModalProps } from ".";
 import { cls } from "@/utils/tailwindCss";
+import nearStore from "@/store/nearStore";
 
-const VoteCreateModal = ({ isOpen, onClose }: ModalProps) => {
+interface VoteCreateModalProps extends ModalProps {
+  comicId: string;
+}
+
+const VoteCreateModal = ({
+  comicId,
+  isOpen,
+  onClose,
+}: VoteCreateModalProps) => {
   const [topic, setTopic] = useState<string>("");
   const [keyword, setKeyword] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-
-  const disabled = useMemo(() => {
-    return !topic.length || !keyword.length || !description.length;
-  }, [topic, keyword, description]);
+  const { wallet } = nearStore();
 
   useEffect(() => {
     return () => {
@@ -20,10 +26,27 @@ const VoteCreateModal = ({ isOpen, onClose }: ModalProps) => {
     };
   }, []);
 
+  const disabled = useMemo(() => {
+    return !topic.length || !keyword.length || !description.length;
+  }, [topic, keyword, description]);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    await wallet.callMethod({
+      contractId: comicId,
+      method: "new_vote",
+      args: {
+        prefix: 0,
+        community_id: comicId,
+      },
+    });
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="px-4">
-        <div className="bg-black rounded-lg">
+        <form onSubmit={handleSubmit} className="bg-black rounded-lg">
           <div className="p-4 mb-4">
             <input
               type="text"
@@ -45,6 +68,7 @@ const VoteCreateModal = ({ isOpen, onClose }: ModalProps) => {
             />
           </div>
           <button
+            type="submit"
             className={cls(
               "w-full py-4 text-lg font-bold rounded-b-lg",
               disabled
@@ -55,7 +79,7 @@ const VoteCreateModal = ({ isOpen, onClose }: ModalProps) => {
           >
             Write the next story
           </button>
-        </div>
+        </form>
       </div>
     </Modal>
   );
