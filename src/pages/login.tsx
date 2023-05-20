@@ -29,7 +29,7 @@ const Login = () => {
         }}
       >
         <Image
-          src="/images/near-logo.svg"
+          src="/svgs/near-logo.svg"
           width={80}
           height={20}
           alt="near-logo"
