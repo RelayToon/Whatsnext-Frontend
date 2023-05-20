@@ -5,7 +5,7 @@ const CreateComic = () => {
     <div>
       <div>
         <Image
-          src="/svgs/arrow-left.svg"
+          src="/svgs/arrow-back.svg"
           width={18}
           height={20}
           alt="arrow left"
