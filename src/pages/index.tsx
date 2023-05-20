@@ -138,7 +138,7 @@ const Home = () => {
         Please write the next story
       </p>
 
-      <div className="flex flex-col gap-6 px-6 py-2">
+      <div className="flex flex-col gap-6 px-5 py-2">
         <button className="flex justify-between items-center">
           <p className="font-bold text-xl">Community</p>
           <Image
