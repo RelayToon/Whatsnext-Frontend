@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import nearStore from "@/store/nearStore";
 import VoteCreateModal from "@/components/modal/VoteCreateModal";
+import VoteModal from "@/components/modal/VoteModal";
 import { cls } from "@/utils/tailwindCss";
 
 const VOTE_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_VOTE_CONTRACT_NAME;
@@ -17,12 +18,16 @@ const ComicVote = () => {
   );
   const [isOpenVoteCreateModal, setIsOpenVoteCreateModal] =
     useState<boolean>(false);
+  const [isOpenVoteModal, setIsOpenVoteModal] = useState<boolean>(false);
+  const [selectedProposal, setSelectedProposal] = useState<number | null>(null);
+  const [proposals, setProposals] = useState([]);
+  const [topic, setTopic] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+
   const { ftBalance } = nearStore();
   const router = useRouter();
   const comicId = router.query.id;
-
-  const [proposals, setProposals] = useState([]);
-  const [selectedProposal, setSelectedProposal] = useState<number | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -72,12 +77,31 @@ const ComicVote = () => {
     };
   }, [comicId, isWalletStarted, wallet]);
 
+  useEffect(() => {
+    if (!isOpenVoteModal) {
+      setTopic("");
+      setKeyword("");
+      setDescription("");
+    }
+  }, [isOpenVoteModal]);
+
+  const handleOpenVoteModal = (
+    title: string,
+    prompt: string,
+    description: string
+  ) => {
+    setTopic(title);
+    setKeyword(prompt);
+    setDescription(description);
+    setIsOpenVoteModal(true);
+  };
+
   return (
     <>
       <div
         className={cls(
           "min-h-screen bg-black text-white",
-          isOpenVoteCreateModal ? "blur-sm" : ""
+          isOpenVoteCreateModal || isOpenVoteModal ? "blur-sm" : ""
         )}
       >
         <div className="flex justify-between items-center px-6 h-16 bg-darkGray">
@@ -125,9 +149,10 @@ const ComicVote = () => {
               {proposals.map(([id, { title, prompt, description }]) => (
                 <div
                   key={id}
-                  className={`flex flex-col gap-2 px-4 py-2.5 bg-darkGray rounded-lg ${
+                  className={cls(
+                    "flex flex-col px-4 py-2.5 bg-darkGray rounded-lg",
                     selectedProposal === id ? "h-auto" : ""
-                  }`}
+                  )}
                   onClick={() =>
                     setSelectedProposal(selectedProposal === id ? null : id)
                   }
@@ -147,28 +172,32 @@ const ComicVote = () => {
                       />
                     </div>
                   </div>
-                  <p className="text-sm" style={{ color: "lightgray" }}>
+                  <p className="text-sm mt-2" style={{ color: "lightgray" }}>
                     {prompt}
                   </p>
                   <div
-                    className={`text-sm ${
+                    className={cls(
+                      "font-medium",
                       selectedProposal === id
-                        ? " h-auto overflow-y-auto"
+                        ? "h-auto overflow-y-auto"
                         : "h-12 overflow-hidden"
-                    }`}
-                    style={{ color: "lightgray" }}
+                    )}
+                    style={{ color: "" }}
                   >
                     {description}
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between pt-3">
                     <div className="flex">
                       <div className="flex mr-3">
                         <Image
-                          src="/svgs/picture.svg"
+                          src="/svgs/diamond.svg"
                           width={20}
                           height={20}
                           alt="into proposal"
                           className="mr-2"
+                          onClick={() =>
+                            handleOpenVoteModal(title, prompt, description)
+                          }
                         />
                         {/* totalVote */}
                         <div>{0}</div>
@@ -186,7 +215,7 @@ const ComicVote = () => {
                       </div>
                     </div>
                     {/* writer */}
-                    <div>{"coke"}</div>
+                    <div>@{"coke"}</div>
                   </div>
                 </div>
               ))}
@@ -209,6 +238,14 @@ const ComicVote = () => {
         voteProposalAddress={voteProposalAddress}
         isOpen={isOpenVoteCreateModal}
         onClose={() => setIsOpenVoteCreateModal(false)}
+      />
+
+      <VoteModal
+        title={topic}
+        prompt={keyword}
+        description={description}
+        isOpen={isOpenVoteModal}
+        onClose={() => setIsOpenVoteModal(false)}
       />
     </>
   );
