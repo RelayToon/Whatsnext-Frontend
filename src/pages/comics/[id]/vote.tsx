@@ -1,21 +1,22 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
-import nearStore from "@/store/nearStore";
-import VoteCreateModal from "@/components/modal/VoteCreateModal";
-import { dummyComic, dummyProposal } from "@/data";
-import { cls } from "@/utils/tailwindCss";
+import nearStore from '@/store/nearStore';
+import VoteCreateModal from '@/components/modal/VoteCreateModal';
+import { dummyComic, dummyProposal } from '@/data';
+import { cls } from '@/utils/tailwindCss';
+import VoteModal from '@/components/modal/VoteModal';
 
 const ComicVote = () => {
-  const [isOpenVoteCreateModal, setIsOpenVoteCreateModal] =
-    useState<boolean>(false);
+  const [isOpenVoteCreateModal, setIsOpenVoteCreateModal] = useState<boolean>(false);
+  const [isOpenVoteModal, setIsOpenVoteModal] = useState<boolean>(false);
+  const [selectedProposal, setSelectedProposal] = useState<number | null>(null);
+
   const { ftBalance } = nearStore();
   const router = useRouter();
   const comicId = router.query.id;
   const comic = dummyComic.find(({ id }) => id === comicId);
-
-  const [selectedProposal, setSelectedProposal] = useState<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -26,10 +27,7 @@ const ComicVote = () => {
   return (
     <>
       <div
-        className={cls(
-          "min-h-screen bg-black text-white",
-          isOpenVoteCreateModal ? "blur-sm" : ""
-        )}
+        className={cls('min-h-screen bg-black text-white', isOpenVoteCreateModal || isOpenVoteModal ? 'blur-sm' : '')}
       >
         <div className="flex justify-between items-center px-6 h-16 bg-darkGray">
           <button
@@ -38,21 +36,11 @@ const ComicVote = () => {
               router.back();
             }}
           >
-            <Image
-              src="/svgs/arrow-left.svg"
-              width={14}
-              height={14}
-              alt="arrow left"
-            />
+            <Image src="/svgs/arrow-left.svg" width={14} height={14} alt="arrow left" />
           </button>
           <p className="font-bold text-xl">Vote</p>
           <button>
-            <Image
-              src="/svgs/setting-detail.svg"
-              width={18}
-              height={22}
-              alt="setting detail"
-            />
+            <Image src="/svgs/setting-detail.svg" width={18} height={22} alt="setting detail" />
           </button>
         </div>
 
@@ -61,12 +49,7 @@ const ComicVote = () => {
             <div className="flex justify-between font-bold my-2.5 px-4 py-2.5 bg-darkGray rounded-lg">
               <p>My Token</p>
               <div className="flex gap-2.5">
-                <Image
-                  src="/svgs/next-token.svg"
-                  width={20}
-                  height={20}
-                  alt="next token"
-                />
+                <Image src="/svgs/next-token.svg" width={20} height={20} alt="next token" />
                 <p>{ftBalance} Next</p>
               </div>
             </div>
@@ -77,43 +60,34 @@ const ComicVote = () => {
                 <div
                   key={index}
                   className={`flex flex-col gap-2 px-4 py-2.5 bg-darkGray rounded-lg ${
-                    selectedProposal === index ? "h-auto" : ""
+                    selectedProposal === index ? 'h-auto' : ''
                   }`}
-                  onClick={() =>
-                    setSelectedProposal(
-                      selectedProposal === index ? null : index
-                    )
-                  }
                 >
-                  {" "}
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-lg">{proposal.title}</p>
-                    <div>
-                      <Image
-                        src="/svgs/arrow-right.svg"
-                        width={12}
-                        height={12}
-                        alt="into proposal"
-                        className={`${
-                          selectedProposal === index
-                            ? "-rotate-90"
-                            : "rotate-90"
-                        }`}
-                      />
+                  {' '}
+                  <div onClick={() => setSelectedProposal(selectedProposal === index ? null : index)}>
+                    <div className="flex justify-between items-center">
+                      <p className="font-bold text-lg">{proposal.title}</p>
+                      <div>
+                        <Image
+                          src="/svgs/arrow-right.svg"
+                          width={12}
+                          height={12}
+                          alt="into proposal"
+                          className={`${selectedProposal === index ? '-rotate-90' : 'rotate-90'}`}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-sm" style={{ color: "lightgray" }}>
-                    {proposal.prompt}
-                  </p>
-                  <div
-                    className={`text-sm ${
-                      selectedProposal === index
-                        ? " h-auto overflow-y-auto"
-                        : "h-12 overflow-hidden"
-                    }`}
-                    style={{ color: "lightgray" }}
-                  >
-                    {proposal.description}
+                    <p className="text-sm" style={{ color: 'lightgray' }}>
+                      {proposal.prompt}
+                    </p>
+                    <div
+                      className={`text-sm ${
+                        selectedProposal === index ? ' max-h-64 overflow-y-auto' : 'h-12 overflow-hidden'
+                      }`}
+                      style={{ color: 'white' }}
+                    >
+                      {proposal.description}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="flex">
@@ -124,17 +98,12 @@ const ComicVote = () => {
                           height={20}
                           alt="into proposal"
                           className="mr-2"
+                          onClick={() => setIsOpenVoteModal(true)}
                         />
                         <div>{proposal.totalVote}</div>
                       </div>
                       <div className="flex">
-                        <Image
-                          src="/svgs/talk.svg"
-                          width={20}
-                          height={20}
-                          alt="into proposal"
-                          className="mr-2"
-                        />
+                        <Image src="/svgs/talk.svg" width={20} height={20} alt="into proposal" className="mr-2" />
                         <div>{proposal.comment}</div>
                       </div>
                     </div>
@@ -157,10 +126,8 @@ const ComicVote = () => {
         </div>
       </div>
 
-      <VoteCreateModal
-        isOpen={isOpenVoteCreateModal}
-        onClose={() => setIsOpenVoteCreateModal(false)}
-      />
+      <VoteCreateModal isOpen={isOpenVoteCreateModal} onClose={() => setIsOpenVoteCreateModal(false)} />
+      <VoteModal isOpen={isOpenVoteModal} onClose={() => setIsOpenVoteModal(false)} />
     </>
   );
 };
