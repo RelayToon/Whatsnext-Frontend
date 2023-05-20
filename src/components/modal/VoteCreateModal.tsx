@@ -5,11 +5,11 @@ import { cls } from "@/utils/tailwindCss";
 import nearStore from "@/store/nearStore";
 
 interface VoteCreateModalProps extends ModalProps {
-  comicId: string;
+  voteProposalAddress: string;
 }
 
 const VoteCreateModal = ({
-  comicId,
+  voteProposalAddress,
   isOpen,
   onClose,
 }: VoteCreateModalProps) => {
@@ -33,14 +33,17 @@ const VoteCreateModal = ({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    await wallet.callMethod({
-      contractId: comicId,
-      method: "new_vote",
+    const res = await wallet.callMethod({
+      contractId: voteProposalAddress,
+      method: "add_proposal",
       args: {
-        prefix: 0,
-        community_id: comicId,
+        title: topic,
+        prompt: keyword,
+        description,
       },
     });
+
+    console.log(res);
   };
 
   return (
