@@ -97,7 +97,10 @@ const Comic = () => {
           type="button"
           onClick={() => {
             const nextEpisode = currentEpisode + 1;
-            if (comicCuts && nextEpisode >= comicCuts?.length) return;
+            if (comicCuts && nextEpisode >= comicCuts?.length) {
+              router.push(`${comicId}/vote`);
+              return;
+            }
 
             setCurrentEpisode(nextEpisode);
           }}

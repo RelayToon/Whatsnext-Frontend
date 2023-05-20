@@ -144,7 +144,7 @@ const ComicVote = () => {
               </div>
             </div>
           </div>
-          <div className="min-h-[calc(100vh-236px)] max-h-[calc(100vh-236px)] overflow-scroll px-5">
+          <div className="min-h-[calc(100vh-236px)] max-h-[calc(100vh-236px)] overflow-scroll px-5 py-6">
             <div className="flex flex-col gap-2.5">
               {proposals.map(([id, { title, prompt, description }]) => (
                 <div
