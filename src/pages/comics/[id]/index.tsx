@@ -1,8 +1,8 @@
-import { useRouter } from "next/router";
-import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { dummyComic } from "@/data";
+import { dummyComic } from '@/data';
 
 const Comic = () => {
   const router = useRouter();
@@ -14,12 +14,7 @@ const Comic = () => {
       <div className="p-2.5">
         <p className="text-right text-sm">@{comic?.author}</p>
         <div className="w-full h-min mt-2.5 mb-5">
-          <Image
-            src={comic?.image || ""}
-            width={1080}
-            height={1080}
-            alt={comic?.title + "-image"}
-          />
+          <Image src={comic?.image || ''} width={1080} height={1080} alt={comic?.title + '-image'} />
         </div>
         <p className="text-xs font-medium opacity-80">{comic?.keyword}</p>
         <p className="font-medium">{comic?.description}</p>
@@ -33,12 +28,7 @@ const Comic = () => {
               router.back();
             }}
           >
-            <Image
-              src="/svgs/arrow-left.svg"
-              width={14}
-              height={14}
-              alt="arrow left"
-            />
+            <Image src="/svgs/arrow-left.svg" width={14} height={14} alt="arrow left" />
           </button>
           <div className="flex flex-col gap-0.5 text-center">
             <p className="font-bold">{comic?.title}</p>
@@ -53,15 +43,12 @@ const Comic = () => {
               <Image src="/svgs/heart.svg" width={20} height={18} alt="heart" />
               <p className="text-sm">991</p>
             </button>
-            <button className="flex items-center gap-1.5">
+            <button className="flex items-center gap-1.5" onClick={() => router.push(`/comics/${comicId}/comment`)}>
               <Image src="/svgs/talk.svg" width={18} height={18} alt="talk" />
               <p className="text-sm">320</p>
             </button>
           </div>
-          <Link
-            href={`/comics/${comic?.id}/vote`}
-            className="rounded border border-lightGray text-sm px-5 py-2"
-          >
+          <Link href={`/comics/${comic?.id}/vote`} className="rounded border border-lightGray text-sm px-5 py-2">
             go vote
           </Link>
         </div>

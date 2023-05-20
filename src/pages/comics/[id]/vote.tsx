@@ -1,10 +1,15 @@
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 
 const ComicVote = () => {
   const router = useRouter();
   const comicId = router.query.id;
 
-  return <div>vote {comicId}</div>;
+  return (
+    <div>
+      <div>vote {comicId}</div>
+      <div></div>
+    </div>
+  );
 };
 
 export default ComicVote;
