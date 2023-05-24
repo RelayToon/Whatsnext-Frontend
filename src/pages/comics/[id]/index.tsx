@@ -3,15 +3,15 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 
-import { dummyComic, dummyComicCuts } from "@/data";
-import { getWalletAuthKey } from "@/utils/auth";
-import nearStore from "@/store/nearStore";
 import { cls } from "@/utils/tailwindCss";
+import { getWalletAuthKey } from "@/utils/auth";
+import { dummyComic, dummyComicCuts } from "@/data";
+import nearStore from "@/store/nearStore";
 
 const Comic = () => {
   const router = useRouter();
   const backgroundRef = useRef<HTMLDivElement>(null);
-  const { isWalletStarted, wallet, setFtBalance, ftBalance } = nearStore();
+  const { isWalletStarted, initFtBalance, clearFtBalance } = nearStore();
 
   const [currentEpisode, setCurrentEpisode] = useState<number>(0);
   const [isHideNav, setIsHideNav] = useState<boolean>(false);
@@ -26,37 +26,27 @@ const Comic = () => {
     return comicCuts?.find(({ id }) => id === currentEpisode);
   }, [comicCuts, currentEpisode]);
 
-  const viewFtToken = useCallback(async () => {
-    const authKey = getWalletAuthKey();
-    if (!authKey) return;
-
-    return wallet.viewMethod({
-      contractId: comicId,
-      method: "ft_balance_of",
-      args: {
-        account_id: authKey,
-      },
-    });
-  }, [wallet, comicId]);
-
   const handleNavHide = useCallback((e: any) => {
     if (e.target === backgroundRef.current) {
       setIsHideNav((prev) => !prev);
     }
   }, []);
 
-  useEffect(() => {
-    if (!isWalletStarted) return;
+  const initComic = useCallback(async () => {
+    try {
+      clearFtBalance();
 
-    (async () => {
-      try {
-        const ftBalance = await viewFtToken();
-        setFtBalance(ftBalance);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, [isWalletStarted, setFtBalance, viewFtToken]);
+      await initFtBalance(comicId as string);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [comicId, initFtBalance, clearFtBalance]);
+
+  useEffect(() => {
+    if (isWalletStarted && getWalletAuthKey()) {
+      initComic();
+    }
+  }, [isWalletStarted, initComic]);
 
   return (
     <main onClick={handleNavHide}>
@@ -169,7 +159,7 @@ const Comic = () => {
           href={`/comics/${comic?.id}/vote`}
           className="flex items-center rounded border border-lightGray text-sm px-5 py-2 h-8"
         >
-          go vote
+          Going to vote
         </Link>
       </div>
     </main>

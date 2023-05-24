@@ -16,6 +16,7 @@ import {
 } from "@near-wallet-selector/core";
 import { setupLedger } from "@near-wallet-selector/ledger";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { getWalletAuthKey } from "@/utils/auth";
 
 const THIRTY_TGAS = "50000000000000";
 const NO_DEPOSIT = "0";
@@ -147,5 +148,17 @@ export class Wallet {
     // Retrieve transaction result from the network
     const transaction = await provider.txStatus(txhash, "unnused");
     return providers.getTransactionLastResult(transaction);
+  }
+
+  async getFtBalance(contractId: string) {
+    const accountId = getWalletAuthKey();
+
+    return this.viewMethod({
+      contractId,
+      method: "ft_balance_of",
+      args: {
+        account_id: accountId,
+      },
+    });
   }
 }

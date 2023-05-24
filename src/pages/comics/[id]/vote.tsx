@@ -144,7 +144,7 @@ const ComicVote = () => {
                   height={20}
                   alt="next token"
                 />
-                <p>{ftBalance} Next</p>
+                <p>{ftBalance ?? 0} Next</p>
               </div>
             </div>
           </div>

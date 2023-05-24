@@ -29,7 +29,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="flex flex-col pt-4 pb-24">
+    <div className="flex flex-col pb-24">
       <div className="flex justify-between p-6">
         <Image
           src="/svgs/hamberger.svg"
