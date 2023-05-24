@@ -1,3 +1,17 @@
+export const genreTabList = [
+  "All",
+  "Top",
+  "Fantasy",
+  "Drama",
+  "Romance",
+  "Action",
+  "sports",
+  "Game",
+  "Comic",
+];
+
+export const suggestTabList = ["Trending", "Top"];
+
 export const dummyComic = [
   {
     id: "dev-1684567174380-54251358482328",

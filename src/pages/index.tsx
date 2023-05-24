@@ -1,39 +1,32 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Image from "next/image";
 
-import { cls } from "@/utils/tailwindCss";
-import { communityList, dummyComic, trendThumbnailList } from "@/data";
+import {
+  communityList,
+  genreTabList,
+  trendThumbnailList,
+  dummyComic,
+  suggestTabList,
+} from "@/data";
 import { Slider } from "@/components/Slider";
-
-const genreTabList = [
-  "All",
-  "Top",
-  "Fantasy",
-  "Drama",
-  "Romance",
-  "Action",
-  "sports",
-  "Game",
-  "Comic",
-];
-
-const suggestTabList = ["Trending", "Top"];
+import { NavTab, TabItem } from "@/components/Tab";
+import { ToonCard } from "@/components/Toon";
 
 const Home = () => {
-  const [currentGenreTab, setCurrentGenreTab] = useState<string>(
+  const [currentGenreTab, setCurrentGenreTab] = useState<string | number>(
     genreTabList[0]
   );
-  const [currentSuggestTab, setCurrentSuggetsTab] = useState<string>(
+  const [currentSuggestTab, setCurrentSuggetsTab] = useState<string | number>(
     suggestTabList[0]
   );
 
-  const handleChangeCurrentGenreTab = (genre: string) => {
-    setCurrentGenreTab(genre);
-  };
+  const handleChangeCurrentGenreTab = useCallback((id: string | number) => {
+    setCurrentGenreTab(id);
+  }, []);
 
-  const handleChangeCurrentSuggestTab = (suggest: string) => {
-    setCurrentSuggetsTab(suggest);
-  };
+  const handleChangeCurrentSuggestTab = useCallback((id: string | number) => {
+    setCurrentSuggetsTab(id);
+  }, []);
 
   return (
     <div className="flex flex-col pt-4 pb-24">
@@ -55,26 +48,16 @@ const Home = () => {
         </div>
         <div className="w-4.5" />
       </div>
-      <div className="pr-5 h-full overflow-y-auto whitespace-nowrap scrollbar-hide">
-        {genreTabList.map((feature) => {
-          const isSelected = currentGenreTab === feature;
 
-          return (
-            <button
-              key={feature}
-              type="button"
-              className={cls(
-                "font-bold ml-5 text-lg pb-2",
-                isSelected ? "text-white border-b-4 border-gray" : "text-gray"
-              )}
-              onClick={() => {
-                handleChangeCurrentGenreTab(feature);
-              }}
-            >
-              {feature}
-            </button>
-          );
-        })}
+      <div className="h-full overflow-y-auto whitespace-nowrap scrollbar-hide">
+        <NavTab
+          tabs={genreTabList.map((genreTab) => ({
+            id: genreTab,
+            title: genreTab,
+          }))}
+          currentTab={{ id: currentGenreTab, title: currentGenreTab + "" }}
+          onChangeTab={handleChangeCurrentGenreTab}
+        />
       </div>
 
       <div className="relative pt-6">
@@ -113,53 +96,33 @@ const Home = () => {
         </button>
         <div className="flex flex-col gap-2.5">
           {communityList.map(({ title, description, episode, thumbnail }) => (
-            <div
-              key={title}
-              className="flex gap-2.5 p-2.5 pr-5 bg-darkGray rounded-lg"
-            >
-              <Image
-                src={thumbnail}
-                className="rounded-lg"
-                width={60}
-                height={60}
-                alt={title + "-thumbnail"}
-              />
-              <div className="w-full flex flex-col justify-center gap-1">
-                <div className="flex justify-between">
-                  <p className="font-bold text-lg pr-4 overflow-hidden truncate">
-                    {title}
-                  </p>
-                  <p className="text-sm">p.{episode}</p>
-                </div>
-
-                <p className="text-sm font-medium">{description}</p>
-              </div>
-            </div>
+            <ToonCard
+              key={title + episode}
+              title={title}
+              description={description}
+              episode={episode}
+              thumbnail={thumbnail}
+            />
           ))}
         </div>
       </div>
 
       <div className="pt-10 pb-4">
         {suggestTabList.map((suggestTab) => {
-          const isSelected = currentSuggestTab === suggestTab;
+          const isActive = currentSuggestTab === suggestTab;
 
           return (
-            <button
+            <TabItem
               key={suggestTab}
-              type="button"
-              className={cls(
-                "font-bold ml-5 text-lg",
-                isSelected ? "text-white" : "text-gray"
-              )}
-              onClick={() => {
-                handleChangeCurrentSuggestTab(suggestTab);
-              }}
-            >
-              {suggestTab}
-            </button>
+              id={suggestTab}
+              title={suggestTab}
+              isActive={isActive}
+              onChange={handleChangeCurrentSuggestTab}
+            />
           );
         })}
       </div>
+
       <div className="grid grid-cols-3 gap-x-2.5 gap-y-2.5 px-4">
         {trendThumbnailList.map((thumbnail) => {
           return (
