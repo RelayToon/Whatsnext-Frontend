@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import Image from "next/image";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
 import { cls } from "@/utils/tailwindCss";
 import { communityList, dummyComic, trendThumbnailList } from "@/data";
+import { Slider } from "@/components/Slider";
 
 const genreTabList = [
   "All",
@@ -22,20 +19,7 @@ const genreTabList = [
 
 const suggestTabList = ["Trending", "Top"];
 
-const settings = {
-  infinite: true,
-  speed: 500,
-  autoplay: true,
-  slidesToShow: 1,
-  pauseOnHover: true,
-  arrows: false,
-  centerMode: true,
-  centerPadding: "20px",
-  focusOnSelect: true,
-};
-
 const Home = () => {
-  const router = useRouter();
   const [currentGenreTab, setCurrentGenreTab] = useState<string>(
     genreTabList[0]
   );
@@ -94,27 +78,7 @@ const Home = () => {
       </div>
 
       <div className="relative pt-6">
-        <Slider {...settings}>
-          {dummyComic.map(({ id, thumbnail, title }) => {
-            return (
-              <button
-                key={id}
-                onClick={() => {
-                  router.push(`/comics/${id}`);
-                }}
-                className="h-full px-2 overflow-hidden"
-              >
-                <Image
-                  src={thumbnail}
-                  className="rounded-xl object-cover w-full h-full"
-                  width={1080}
-                  height={1080}
-                  alt={title + "-thumbnail"}
-                />
-              </button>
-            );
-          })}
-        </Slider>
+        <Slider items={dummyComic} route="comics" />
         <Image
           className="absolute -top-1/4 left-0 -z-10 w-80 h-80"
           width={300}
