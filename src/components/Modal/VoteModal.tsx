@@ -1,24 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
-
-import Modal, { ModalProps } from "./Modal";
-import { cls } from "@/utils/tailwindCss";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+
+import { cls } from "@/utils/tailwindCss";
+import { Proposal } from "@/types";
 import nearStore from "@/store/nearStore";
+import Modal, { ModalProps } from "./Modal";
 
 interface VoteModalProps extends ModalProps {
-  proposal: number;
-  title: string;
-  prompt: string;
-  description: string;
   voteProposalAddress: string;
+  proposal: Proposal | null;
 }
 
 const VoteModal = ({
-  proposal,
-  title,
-  prompt,
-  description,
   voteProposalAddress,
+  proposal,
   isOpen,
   onClose,
 }: VoteModalProps) => {
@@ -42,7 +37,7 @@ const VoteModal = ({
         contractId: voteProposalAddress,
         method: "vote",
         args: {
-          proposal: proposal + "",
+          proposal: proposal?.id,
           amount: voteAmount,
         },
       });
@@ -71,7 +66,7 @@ const VoteModal = ({
           >
             <div className="flex justify-between mb-2">
               <div className="overflow-hidden overflow-ellipsis whitespace-nowrap font-bold text-2xl">
-                {title}
+                {proposal?.title}
               </div>
               <Image
                 src="/svgs/arrow-right.svg"
@@ -84,7 +79,7 @@ const VoteModal = ({
               />
             </div>
             <div className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray text-sm">
-              {prompt}
+              {proposal?.prompt}
             </div>
             <div
               className={cls(
@@ -94,7 +89,7 @@ const VoteModal = ({
                   : "overflow-hidden overflow-ellipsis whitespace-nowrap h-12"
               )}
             >
-              {description}
+              {proposal?.description}
             </div>
           </div>
           <div className="flex h-full text-white justify-between px-4 mb-4">

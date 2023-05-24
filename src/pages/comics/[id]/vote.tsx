@@ -5,6 +5,8 @@ import Image from "next/image";
 import nearStore from "@/store/nearStore";
 import { VoteCreateModal, VoteModal } from "@/components/Modal";
 import { cls } from "@/utils/tailwindCss";
+import { ProposalCard } from "@/components/Vote/ProposalCard";
+import { Proposal } from "@/types";
 
 const VOTE_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_VOTE_CONTRACT_NAME;
 const VOTE_PROPOSAL_CONTRACT_ADDRESS =
@@ -18,13 +20,8 @@ const ComicVote = () => {
   const [isOpenVoteCreateModal, setIsOpenVoteCreateModal] =
     useState<boolean>(false);
   const [isOpenVoteModal, setIsOpenVoteModal] = useState<boolean>(false);
-  const [selectedProposal, setSelectedProposal] = useState<number | null>(null);
-  const [proposals, setProposals] = useState([]);
-
-  const [proposalId, setProposalId] = useState<number>(0);
-  const [topic, setTopic] = useState<string>("");
-  const [keyword, setKeyword] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [proposals, setProposals] = useState<any[]>([]);
+  const [proposal, setProposal] = useState<Proposal | null>(null);
 
   const { ftBalance } = nearStore();
   const router = useRouter();
@@ -69,30 +66,16 @@ const ComicVote = () => {
         console.error(e);
       }
     })();
-
-    return () => {
-      setSelectedProposal(null);
-    };
   }, [comicId, isWalletStarted, wallet]);
 
   useEffect(() => {
     if (!isOpenVoteModal) {
-      setTopic("");
-      setKeyword("");
-      setDescription("");
+      setProposal(null);
     }
   }, [isOpenVoteModal]);
 
-  const handleOpenVoteModal = (
-    proposalId: number,
-    title: string,
-    prompt: string,
-    description: string
-  ) => {
-    setProposalId(proposalId);
-    setTopic(title);
-    setKeyword(prompt);
-    setDescription(description);
+  const handleOpenVoteModal = (proposal: Proposal) => {
+    setProposal(proposal);
     setIsOpenVoteModal(true);
   };
 
@@ -144,86 +127,20 @@ const ComicVote = () => {
               </div>
             </div>
           </div>
-          <div className="min-h-[calc(100vh-236px)] max-h-[calc(100vh-236px)] overflow-scroll px-5 py-6">
+          <div className="min-h-[calc(100vh-238px)] max-h-[calc(100vh-238px)] overflow-scroll px-5 mt-6 pb-6">
             <div className="flex flex-col gap-2.5">
               {proposals.map(([id, { title, prompt, description }]) => (
-                <div
-                  key={id}
-                  className={cls(
-                    "flex flex-col px-4 py-2.5 bg-darkGray rounded-lg",
-                    selectedProposal === id ? "h-auto" : ""
-                  )}
-                  onClick={() =>
-                    setSelectedProposal(selectedProposal === id ? null : id)
-                  }
-                >
-                  {" "}
-                  <div className="flex justify-between items-center">
-                    <p className="font-bold text-lg">{title}</p>
-                    <div>
-                      <Image
-                        src="/svgs/arrow-right.svg"
-                        width={12}
-                        height={12}
-                        alt="into proposal"
-                        className={`${
-                          selectedProposal === id ? "-rotate-90" : "rotate-90"
-                        }`}
-                      />
-                    </div>
-                  </div>
-                  <p className="text-sm mt-2" style={{ color: "lightgray" }}>
-                    {prompt}
-                  </p>
-                  <div
-                    className={cls(
-                      "font-medium",
-                      selectedProposal === id
-                        ? "h-auto overflow-y-auto"
-                        : "h-12 overflow-hidden"
-                    )}
-                    style={{ color: "" }}
-                  >
-                    {description}
-                  </div>
-                  <div className="flex justify-between pt-3">
-                    <div className="flex">
-                      <div className="flex mr-3">
-                        <Image
-                          src="/svgs/diamond.svg"
-                          width={20}
-                          height={20}
-                          alt="into proposal"
-                          className="mr-2"
-                          onClick={() =>
-                            handleOpenVoteModal(id, title, prompt, description)
-                          }
-                        />
-                        {/* totalVote */}
-                        <div>{0}</div>
-                      </div>
-                      <div className="flex">
-                        <Image
-                          src="/svgs/talk.svg"
-                          width={20}
-                          height={20}
-                          alt="into proposal"
-                          className="mr-2"
-                        />
-                        {/* comment */}
-                        <div>{0}</div>
-                      </div>
-                    </div>
-                    {/* writer */}
-                    <div>@{"anonymous"}</div>
-                  </div>
-                </div>
+                <ProposalCard
+                  key={comicId + id}
+                  proposal={{ id, title, prompt, description }}
+                  handleVote={handleOpenVoteModal}
+                />
               ))}
             </div>
           </div>
         </div>
 
-        <div className="flex px-5 py-2.5 h-24 bg-darkGray mt-3">
+        <div className="flex px-5 py-2.5 h-24 bg-darkGray">
           <button
             type="button"
             onClick={() => setIsOpenVoteCreateModal(true)}
@@ -250,10 +167,7 @@ const ComicVote = () => {
 
       <VoteModal
         voteProposalAddress={voteProposalAddress}
-        proposal={proposalId}
-        title={topic}
-        prompt={keyword}
-        description={description}
+        proposal={proposal}
         isOpen={isOpenVoteModal}
         onClose={() => setIsOpenVoteModal(false)}
       />
