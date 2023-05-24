@@ -12,7 +12,7 @@ const VOTE_PROPOSAL_CONTRACT_ADDRESS =
 
 const ComicVote = () => {
   const { wallet, isWalletStarted } = nearStore();
-  const [voteProposalAddress, setVoteProposalAddress] = useState<string>(
+  const [voteProposalAddress] = useState<string>(
     VOTE_PROPOSAL_CONTRACT_ADDRESS as string
   );
   const [isOpenVoteCreateModal, setIsOpenVoteCreateModal] =
@@ -35,40 +35,36 @@ const ComicVote = () => {
       if (!isWalletStarted) return;
 
       try {
-        const isVoting = await wallet.viewMethod({
-          contractId: VOTE_CONTRACT_ADDRESS,
-          method: "is_voting",
-          args: {
-            community_id: comicId,
-          },
-        });
+        const isVoting = await wallet.getIsVoting(
+          VOTE_CONTRACT_ADDRESS,
+          comicId
+        );
 
-        // const voteProposalAddress = await wallet.viewMethod({
-        //   contractId: VOTE_CONTRACT_ADDRESS,
-        //   method: "get_vote_account_id",
-        //   args: {
-        //     community_id: comicId,
-        //   },
-        // });
-        // setVoteProposalAddress(voteProposalAddress);
+        /**
+         * @TODO 커뮤니티별로 투표 컨트랙트가 추가되면 투표 컨트랙트 주소 get 로직이 추가되야함.
+         *
+         * example)
+         * const voteProposalAddress = await wallet.viewMethod({
+         *   contractId: VOTE_CONTRACT_ADDRESS,
+         *   method: "get_vote_account_id",
+         *   args: {
+         *     community_id: comicId,
+         *   },
+         * });
+         *
+         * setVoteProposalAddress(voteProposalAddress);
+         */
 
         if (isVoting) {
-          const allProposals = await wallet.viewMethod({
-            contractId: VOTE_PROPOSAL_CONTRACT_ADDRESS,
-            method: "get_all_proposals",
-          });
+          const allProposals = await wallet.getAllProposals(
+            VOTE_PROPOSAL_CONTRACT_ADDRESS
+          );
 
           setProposals(allProposals);
-        } else {
-          await wallet.callMethod({
-            contractId: VOTE_PROPOSAL_CONTRACT_ADDRESS,
-            method: "new_vote",
-            args: {
-              prefix: "1",
-              community_id: comicId,
-            },
-          });
+          return;
         }
+
+        await wallet.startVote(VOTE_PROPOSAL_CONTRACT_ADDRESS, "1", comicId);
       } catch (e) {
         console.error(e);
       }

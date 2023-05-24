@@ -93,7 +93,7 @@ export class Wallet {
   }: {
     contractId: string;
     method: string;
-    args: any;
+    args?: any;
   }) {
     const { network } = this.walletSelector.options;
     const provider = new providers.JsonRpcProvider({ url: network.nodeUrl });
@@ -119,8 +119,8 @@ export class Wallet {
     contractId: string;
     method: string;
     args: any;
-    gas: string;
-    deposit: string;
+    gas?: string;
+    deposit?: string;
   }) {
     // Sign a transaction with the "FunctionCall" action
     return await this.wallet.signAndSendTransaction({
@@ -153,11 +153,43 @@ export class Wallet {
   async getFtBalance(contractId: string) {
     const accountId = getWalletAuthKey();
 
-    return this.viewMethod({
+    return await this.viewMethod({
       contractId,
       method: "ft_balance_of",
       args: {
         account_id: accountId,
+      },
+    });
+  }
+
+  async getIsVoting(voteContractId: string, communityContractId: string) {
+    return await this.viewMethod({
+      contractId: voteContractId,
+      method: "is_voting",
+      args: {
+        community_id: communityContractId,
+      },
+    });
+  }
+
+  async getAllProposals(voteContractId: string) {
+    return await this.viewMethod({
+      contractId: voteContractId,
+      method: "get_all_proposals",
+    });
+  }
+
+  async startVote(
+    voteContractId: string,
+    communityContractId: string,
+    prefix: string | number
+  ) {
+    await this.callMethod({
+      contractId: voteContractId,
+      method: "new_vote",
+      args: {
+        prefix,
+        community_id: communityContractId,
       },
     });
   }
