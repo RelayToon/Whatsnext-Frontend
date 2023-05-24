@@ -5,7 +5,7 @@ import Image from "next/image";
 import { cls } from "@/utils/tailwindCss";
 import { Proposal } from "@/types";
 import nearStore from "@/store/nearStore";
-import { VoteCreateModal, VoteModal } from "@/components/Modal";
+import { VoteCreateModal, VoteModal } from "@/components/Modals";
 import { ProposalCard } from "@/components/Vote/ProposalCard";
 
 const VOTE_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_VOTE_CONTRACT_NAME;
