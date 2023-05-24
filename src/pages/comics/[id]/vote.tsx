@@ -1,12 +1,12 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 
+import { cls } from "@/utils/tailwindCss";
+import { Proposal } from "@/types";
 import nearStore from "@/store/nearStore";
 import { VoteCreateModal, VoteModal } from "@/components/Modal";
-import { cls } from "@/utils/tailwindCss";
 import { ProposalCard } from "@/components/Vote/ProposalCard";
-import { Proposal } from "@/types";
 
 const VOTE_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_VOTE_CONTRACT_NAME;
 const VOTE_PROPOSAL_CONTRACT_ADDRESS =
@@ -27,46 +27,63 @@ const ComicVote = () => {
   const router = useRouter();
   const comicId = router.query.id;
 
-  useEffect(() => {
-    (async () => {
-      if (!isWalletStarted) return;
+  const isBlurBackground = useMemo(
+    () => isOpenVoteCreateModal || isOpenVoteModal,
+    [isOpenVoteCreateModal, isOpenVoteModal]
+  );
 
-      try {
-        const isVoting = await wallet.getIsVoting(
-          VOTE_CONTRACT_ADDRESS,
-          comicId
+  const initVote = useCallback(async () => {
+    if (!isWalletStarted) return;
+
+    try {
+      const isVoting = await wallet.getIsVoting(VOTE_CONTRACT_ADDRESS, comicId);
+
+      /**
+       * @TODO 커뮤니티별로 투표 컨트랙트가 추가되면 투표 컨트랙트 주소 get 로직이 추가되야함.
+       *
+       * example)
+       * const voteProposalAddress = await wallet.viewMethod({
+       *   contractId: VOTE_CONTRACT_ADDRESS,
+       *   method: "get_vote_account_id",
+       *   args: {
+       *     community_id: comicId,
+       *   },
+       * });
+       *
+       * setVoteProposalAddress(voteProposalAddress);
+       */
+
+      if (isVoting) {
+        const allProposals = await wallet.getAllProposals(
+          VOTE_PROPOSAL_CONTRACT_ADDRESS
         );
 
-        /**
-         * @TODO 커뮤니티별로 투표 컨트랙트가 추가되면 투표 컨트랙트 주소 get 로직이 추가되야함.
-         *
-         * example)
-         * const voteProposalAddress = await wallet.viewMethod({
-         *   contractId: VOTE_CONTRACT_ADDRESS,
-         *   method: "get_vote_account_id",
-         *   args: {
-         *     community_id: comicId,
-         *   },
-         * });
-         *
-         * setVoteProposalAddress(voteProposalAddress);
-         */
-
-        if (isVoting) {
-          const allProposals = await wallet.getAllProposals(
-            VOTE_PROPOSAL_CONTRACT_ADDRESS
-          );
-
-          setProposals(allProposals);
-          return;
-        }
-
-        await wallet.startVote(VOTE_PROPOSAL_CONTRACT_ADDRESS, "1", comicId);
-      } catch (e) {
-        console.error(e);
+        setProposals(allProposals);
+        return;
       }
-    })();
+
+      await wallet.startVote(VOTE_PROPOSAL_CONTRACT_ADDRESS, "1", comicId);
+    } catch (e) {
+      console.error(e);
+    }
   }, [comicId, isWalletStarted, wallet]);
+
+  const handleOpenVoteModal = useCallback((proposal: Proposal) => {
+    setProposal(proposal);
+    setIsOpenVoteModal(true);
+  }, []);
+
+  const voteCreateCallback = useCallback(async () => {
+    const allProposals = await wallet.getAllProposals(
+      VOTE_PROPOSAL_CONTRACT_ADDRESS
+    );
+
+    setProposals(allProposals);
+  }, [wallet]);
+
+  useEffect(() => {
+    initVote();
+  }, [initVote]);
 
   useEffect(() => {
     if (!isOpenVoteModal) {
@@ -74,17 +91,12 @@ const ComicVote = () => {
     }
   }, [isOpenVoteModal]);
 
-  const handleOpenVoteModal = (proposal: Proposal) => {
-    setProposal(proposal);
-    setIsOpenVoteModal(true);
-  };
-
   return (
     <>
       <div
         className={cls(
           "min-h-screen bg-black text-white",
-          isOpenVoteCreateModal || isOpenVoteModal ? "blur-sm" : ""
+          isBlurBackground ? "blur-sm" : ""
         )}
       >
         <div className="flex justify-between items-center px-6 h-16 bg-darkGray">
@@ -154,14 +166,7 @@ const ComicVote = () => {
       <VoteCreateModal
         voteProposalAddress={voteProposalAddress}
         isOpen={isOpenVoteCreateModal}
-        afterCallback={async () => {
-          const allProposals = await wallet.viewMethod({
-            contractId: VOTE_PROPOSAL_CONTRACT_ADDRESS,
-            method: "get_all_proposals",
-          });
-
-          setProposals(allProposals);
-        }}
+        afterCallback={voteCreateCallback}
         onClose={() => setIsOpenVoteCreateModal(false)}
       />
 
