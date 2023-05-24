@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import nearStore from "@/store/nearStore";
-import VoteCreateModal from "@/components/modal/VoteCreateModal";
-import VoteModal from "@/components/modal/VoteModal";
+import { VoteCreateModal, VoteModal } from "@/components/Modal";
 import { cls } from "@/utils/tailwindCss";
 
 const VOTE_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_VOTE_CONTRACT_NAME;

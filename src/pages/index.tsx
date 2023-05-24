@@ -7,7 +7,6 @@ import "slick-carousel/slick/slick-theme.css";
 
 import { cls } from "@/utils/tailwindCss";
 import { communityList, dummyComic, trendThumbnailList } from "@/data";
-import nearStore from "@/store/nearStore";
 
 const genreTabList = [
   "All",
@@ -37,7 +36,6 @@ const settings = {
 
 const Home = () => {
   const router = useRouter();
-  const { wallet } = nearStore();
   const [currentGenreTab, setCurrentGenreTab] = useState<string>(
     genreTabList[0]
   );
